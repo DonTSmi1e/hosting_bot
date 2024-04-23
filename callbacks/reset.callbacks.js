@@ -24,7 +24,7 @@ module.exports = async (ctx) => {
         database.password = password;
         await database.save();
 
-        await ctx.editMessageText(`<b>Продлен до ${database.next_payment}</b>
+        await ctx.editMessageText(`<b>Продлен до ${database.next_payment.toISOString().replace(/T/, ' ').replace(/\..+/, '')}</b>
 
 IP: <code>${database.host}</code>
 Порт: <code>${database.port}</code>
