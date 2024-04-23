@@ -30,10 +30,7 @@ module.exports = async (ctx) => {
 
         await db.query(`CREATE DATABASE ${db_name}`);
         await db.query(`CREATE USER '${username}'@'%' IDENTIFIED BY '${password}';`);
-        await db.query(`GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES ON ${db_name}.* TO '${username}'@'${settings.db_host}';`);
-
-        user.balance -= settings.bot_price;
-        await user.save();
+        await db.query(`GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, INDEX, DROP, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES ON ${db_name}.* TO '${username}'@'%';`);
 
         const next_payment = new Date();
         next_payment.setMonth(next_payment.getMonth() + 1);
@@ -47,6 +44,9 @@ module.exports = async (ctx) => {
             db_name: db_name,
             next_payment: next_payment
         });
+
+        user.balance -= settings.bot_price;
+        await user.save();
 
         await ctx.editMessageText(`Спасибо что доверяете нам ❤️
 IP: <code>${settings.db_host}</code>
