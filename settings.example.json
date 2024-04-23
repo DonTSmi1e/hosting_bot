@@ -1,0 +1,17 @@
+{
+    "bot_token": "token",
+    "bot_owner": 0,
+    "bot_price": 0,
+    "bot_db": "mysql://user:pass@host:port/db",
+    "db_host": "host",
+    "db_port": 3306,
+    "db_user": "user",
+    "db_pass": "pass",
+    "sber": "card number OR nothing",
+    "tinkoff": "card number OR nothing",
+    "ton": "ton address OR nothing",
+    "admin": "@username",
+    "sber_admin": "@username",
+    "tinkoff_admin": "@username",
+    "ton_admin": "@username"
+}
