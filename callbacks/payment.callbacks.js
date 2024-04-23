@@ -11,6 +11,7 @@ module.exports = async (ctx) => {
     if (!user) { return; }
 
     let keyboard = [];
+    if (settings.support) { keyboard.push([ Markup.button.callback('⚫️ Через тех. поддержку', 'support') ]); }
     if (settings.sber)    { keyboard.push([ Markup.button.callback('🟢 Сбербанк (по номеру карты)', 'sber') ]); }
     if (settings.tinkoff) { keyboard.push([ Markup.button.callback('🟡 Тинькофф (по номеру карты)', 'tinkoff') ]); }
     if (settings.ton)     { keyboard.push([ Markup.button.callback('🔵 TON', 'ton') ]); }
