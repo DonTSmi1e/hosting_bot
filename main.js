@@ -67,7 +67,7 @@ async function main() {
                     if (user.balance < settings.bot_price) {
                         try {
                             const db = await require('../hostDb');
-                            await db.query(`ALTER USER '${database.user}'@'${database.host}' ACCOUNT LOCK;`);
+                            await db.query(`ALTER USER '${database.user}'@'%' ACCOUNT LOCK;`);
                         } catch (error) {
                             console.error(error);
                         }

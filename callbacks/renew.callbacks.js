@@ -20,7 +20,7 @@ module.exports = async (ctx) => {
             await user.save();
 
             const db = await require('../hostDb');
-            await db.query(`ALTER USER '${database.user}'@'${database.host}' ACCOUNT UNLOCK;`);
+            await db.query(`ALTER USER '${database.user}'@'%' ACCOUNT UNLOCK;`);
     
             const next_payment = new Date(database.next_payment);
             next_payment.setMonth(next_payment.getMonth() + 1);

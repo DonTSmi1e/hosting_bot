@@ -18,7 +18,7 @@ module.exports = async (ctx) => {
         const db = await require('../hostDb');
         const password = generator.generate({ length: 10, numbers: true });
 
-        await db.query(`ALTER USER '${database.user}'@'${database.host}' IDENTIFIED BY '${password}';`);
+        await db.query(`ALTER USER '${database.user}'@'%' IDENTIFIED BY '${password}';`);
         await db.query('FLUSH PRIVILEGES;');
 
         database.password = password;
