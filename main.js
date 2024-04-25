@@ -43,9 +43,6 @@ reporter = async (ctx, next) => {
     if (ctx.callbackQuery) {
         console.log(`${date}#callback# (${ctx.from.id}) @${ctx.from.username} - ${ctx.callbackQuery.data}`);
     } else
-    if (ctx.message && ctx.message.startsWith('/')) {
-        console.log(`${date}#command# (${ctx.from.id}) @${ctx.from.username} - ${ctx.message.text}`);
-    } else
     if (ctx.message) {
         console.log(`${date}#message# (${ctx.from.id}) @${ctx.from.username} - ${ctx.message.text}`);
     } else {
