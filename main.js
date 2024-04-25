@@ -1,4 +1,10 @@
-const { Telegraf, Scenes, session } = require('telegraf');
+const fs = require('fs');
+fs.mkdir('./logs', { recursive: true }, (err) => { if (err) throw err; });
+const log_path = `./logs/${(new Date()).toString().replaceAll(':', '-')}.log`;
+const log_stream = fs.createWriteStream(log_path);
+process.stdout.write = process.stderr.write = log_stream.write.bind(log_stream);
+
+const { Telegraf, Context, Scenes, session } = require('telegraf');
 const cron = require('node-cron');
 
 const settings = require('./settings.json');
@@ -28,6 +34,36 @@ const add_admin_scene = require('./scenes/add_admin.scenes');
 const add_money_scene = require('./scenes/add_money.scenes');
 const add_promo_scene = require('./scenes/add_promo.scenes');
 
+/**
+ * @param { Context } ctx 
+ */
+reporter = async (ctx, next) => {
+    date = (new Date()).toISOString();
+
+    if (ctx.callbackQuery) {
+        console.log(`${date}#callback# (${ctx.from.id}) @${ctx.from.username} - ${ctx.callbackQuery.data}`);
+    } else
+    if (ctx.message && ctx.message.startswith('/')) {
+        console.log(`${date}#command# (${ctx.from.id}) @${ctx.from.username} - ${ctx.message.text}`);
+    } else
+    if (ctx.message) {
+        console.log(`${date}#message# (${ctx.from.id}) @${ctx.from.username} - ${ctx.message.text}`);
+    } else {
+        console.log(`${date}#unknown# (${ctx.from.id}) @${ctx.from.username}`);
+    }
+
+    return next().then().catch(async (err) => {
+        console.error(err);
+        await ctx.telegram.sendMessage(settings.bot_owner, `⚠️ <b>Отчет об ошибке</b>
+<b>Лог файл:</b> <code>${log_path}</code>
+<b>Дата:</b> <code>${date}</code>
+<code>
+${err}
+</code>`, { parse_mode: 'HTML' });
+    });
+}
+
+bot.use(reporter);
 bot.use(session());
 bot.use((new Scenes.Stage([add_admin_scene, add_money_scene, add_promo_scene])).middleware());
 
@@ -54,6 +90,9 @@ bot.action('add_money', Scenes.Stage.enter('add_money'));
 bot.action('add_admin', Scenes.Stage.enter('add_admin'));
 bot.action('add_promo', Scenes.Stage.enter('add_promo'));
 bot.on('message', async (ctx) => { await promo_apply_callback(ctx); });
+
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 async function main() {
     cron.schedule('0 0 * * *', async () => {
