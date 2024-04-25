@@ -1,4 +1,4 @@
-const { Context } = require('telegraf');
+const { Context, Markup } = require('telegraf');
 const generator = require('generate-password');
 
 const settings = require('../settings.json');
@@ -15,9 +15,9 @@ module.exports = async (ctx) => {
     if (!user) { return; }
     if (user.balance < settings.bot_price) {
         await ctx.editMessageText(`Стоимость базы данных: <b>${settings.bot_price}</b> руб./месяц.
-<b>У вас недостаточно средств на балансе.</b>`, {
+У вас не хватает <b>${settings.bot_price - user.balance}</b> руб.`, {
             parse_mode: 'HTML',
-            ...menu_keyboard
+            ...Markup.inlineKeyboard([[ Markup.button.callback('Назад', 'menu') ]])
         });
         return;
     }
